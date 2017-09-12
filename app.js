@@ -3,12 +3,15 @@ var express = require("express"),
     bodyParser = require("body-parser"),
     mongoose = require("mongoose"),
     Form = require("./models/form"),
+    User = require("./models/user"),
     seedDB = require("./seeds");
+
+seedDB();
 
 mongoose.connect("mongodb://localhost/challenge");
 app.use(bodyParser .urlencoded({extended: true}));
 app.set("view engine", "ejs");
-// seedDB();
+
 
 //root path
 app.get("/", function(req, res){
@@ -54,7 +57,8 @@ app.get("/form/:id", function(req, res){
         if(err){
             console.log(err);
         } else {
-            res.render("form", {form: foundForm});
+            console.log(foundForm);
+            res.render("show", {form: foundForm});
         }
     }
 )});

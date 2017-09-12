@@ -1,5 +1,6 @@
 var mongoose = require("mongoose"),
-    Form = require("./models/form");
+    Form = require("./models/form"),
+    User = require("./models/user");
     
 var data=[
     {
@@ -27,18 +28,19 @@ function seedDB(){
             console.log("removed all existing form data");
         }
     });
+    //add in new forms
+    data.forEach(function(seed){
+        Form.create(seed, function(err, form){
+            if(err){
+                console.log(err);
+            } else {
+                console.log("forms added");
+            }
+        });
+    });
 }
 
-//add in new forms
-data.forEach(function(seed){
-    Form.create(seed, function(err, form){
-        if(err){
-            console.log(err);
-        } else {
-            console.log("forms added");
-        }
-    });
-});
+
 
 module.exports =seedDB;
     
