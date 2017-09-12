@@ -1,0 +1,36 @@
+<% include ./partials/header %>
+
+<div class="container">
+    <div class="row">
+        <div class="page-header">
+            <h3>Please input your information here</h3>
+        </div>
+        
+        <form action="/form" method="POST">
+            <div class="form-group">
+                <input class="form-control" type="text" name="name" placeholder="name">
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="text" name="email" placeholder="e-mail">
+            </div>
+            <div class="form-group">
+                <textarea class="form-control" type="text" name="message" placeholder="message goes here" rows="5"></textarea>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row" style="display:flex; flex-wrap: wrap;">
+    <% form.forEach(function(form){ %>
+      <div class="col-sm-6 col-md-4">
+          <div class="caption">
+              <h4><%= form.name %></h4>
+          </div>
+          <p>
+              <a href="/form/<%= form._id>%>" class="btn btn-primary">More Info</a>
+          </p>
+      </div>  
+    })
+</div>
+
+<% include ./partials/footer %>
