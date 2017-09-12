@@ -1,22 +1,23 @@
 var express               = require("express"),
     app                   = express(),
+    bodyParser            = require("body-parser"),
     mongoose              = require("mongoose"),
     passport              = require("passport"),
-    bodyParser            = require("body-parser"),
-    User                  = require("./models/user"),
     localStrategy         = require("passport-local"),
     passportLocalMongoose = require("passport-local-mongoose"),
     Form                  = require("./models/form"),
+    User                  = require("./models/user"),
     seedDB                = require("./seeds");
 
-seedDB();
-
 //mongoose database
+mongoose.Promise = global.Promise;
 mongoose.connect("mongodb://localhost/challenge");
 //to use bodyParser
 app.use(bodyParser.urlencoded({extended: true}));
 //to omit ejs at the end of files
 app.set("view engine", "ejs");
+//run seedDB
+seedDB();
 
 //PASSPORT CONFIGURATION
 app.use(require("express-session")({
@@ -33,55 +34,83 @@ passport.use(new localStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-//root path
+//ROOT - login
 app.get("/", function(req, res){
     res.render("login");
 });
 
-//show path
-app.get("/show", function(req, res){
+//ROOT - (after login) form path
+app.get("/form", isLoggedIn, function(req, res){
+    res.render("form");
+});
+
+//INDEX - display list of comments
+app.get("/show", isLoggedIn, function(req, res){
+    //forms from db
     Form.find({}, function(err, allForms){
-                if(err){
-                    console.log(err);
-                } else {
-                    res.render("show", {forms: allForms});
-                }
-            });
-});
-
-//form path
-app.get("/form",  isLoggedIn, function(req, res){
-           res.render("form");
-});
-
-//new form path
-app.post("/form",  isLoggedIn, function(req, res){
-    var username = req.body.username;
-    var email = req.body.email;
-    var message = req.body.message;
-    var newForm = {username:username, email:email, message:message};
-    //create new form and save to db
-    Form.create(newForm, isLoggedIn, function(err, newlyCreated){
         if(err){
             console.log(err);
         } else {
-            //redirect back to updated form with links to the submitted data
-            res.redirect("form");
+            res.render("index", {forms: allForms});
         }
     });
 });
 
-//show more info about clicked form
-app.get("/form/:id", isLoggedIn, function(req, res){
-    Form.findById(req.params.id, function(err, foundForm){
+
+//CREATE - new form path
+app.post("/form",  isLoggedIn, function(req, res){
+    var username = req.body.name;
+    var email = req.body.email;
+    var message = req.body.message;
+    var newForm = {username:username, email:email, message:message};
+    console.log("newForm: ", newForm);
+    //create new form and save to db
+    Form.create(newForm, isLoggedIn, function(err, newlyCreated){
         if(err){
             console.log(err);
+            res.redirect("back");
         } else {
-            console.log(foundForm);
-            res.render("show", {form: foundForm});
+            // // using SendGrid's v3 Node.js Library
+            // // https://github.com/sendgrid/sendgrid-nodejs
+            // const sgMail = require('@sendgrid/mail');
+            // sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+            // const msg = {
+            //     to: 'test@example.com',
+            //     from: 'test@example.com',
+            //     subject: 'Sending with SendGrid is Fun',
+            //     text: 'and easy to do anywhere, even with Node.js',
+            //     html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+            // };
+            // sgMail.send(msg);
+            // //redirect back to updated form with links to the submitted data
+            res.redirect("/form");
         }
-    }
-)});
+    });
+});
+
+// //INDEX - display list of comments
+// app.get("/show", function(req, res){
+//     //forms from db
+//     Form.find({}, function(err, allForms){
+//         if(err){
+//             console.log(err);
+//         } else {
+//             res.render("index", {forms: allForms});
+//         }
+//     });
+// });
+
+// //show more info about clicked form
+// app.get("/form/:id", isLoggedIn, function(req, res){
+//     Form.findById(req.params.id, function(err, foundForm){
+//         if(err){
+//             console.log(err);
+//         } else {
+//             console.log(foundForm);
+//             res.render("show", {form: foundForm});
+//         }
+//     }
+// )});
 
 //=========================
 //  AUTHENTICATION ROUTES
