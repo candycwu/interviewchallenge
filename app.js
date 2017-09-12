@@ -14,7 +14,7 @@ seedDB();
 //mongoose database
 mongoose.connect("mongodb://localhost/challenge");
 //to use bodyParser
-app.use(bodyParser .urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({extended: true}));
 //to omit ejs at the end of files
 app.set("view engine", "ejs");
 
@@ -38,15 +38,20 @@ app.get("/", function(req, res){
     res.render("login");
 });
 
-//form path
-app.get("/form",  isLoggedIn, function(req, res){
-            Form.find({}, function(err, allForms){
+//show path
+app.get("/show", function(req, res){
+    Form.find({}, function(err, allForms){
                 if(err){
                     console.log(err);
                 } else {
-                    res.render("form", {forms: allForms});
+                    res.render("show", {forms: allForms});
                 }
             });
+});
+
+//form path
+app.get("/form",  isLoggedIn, function(req, res){
+           res.render("form");
 });
 
 //new form path
@@ -112,6 +117,7 @@ app.post("/login", passport.authenticate("local",
         successRedirect: "/form",
         failureRedirect: "/login"
     }), function(req, res){
+        console.log("username: " + req.body.username + "pw: " + req.body.password);
 });
 
 //logout route

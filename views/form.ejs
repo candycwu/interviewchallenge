@@ -16,7 +16,7 @@
         
         <form action="/form" method="POST">
             <div class="form-group">
-                <input class="form-control" type="text" name="form[name]" placeholder="name">
+                <input class="form-control" type="text" name="form[username]" placeholder="name">
             </div>
             <div class="form-group">
                 <input class="form-control" type="text" name="form[email]" placeholder="abc@mno.xyz">
@@ -25,21 +25,11 @@
                 <textarea class="form-control" type="text" name="form[message]" placeholder="message" rows="5"></textarea>
             </div>
             <button class="btn btn-info">Submit</button>
+            <div class="caption">
+                <a href="/show" class="btn btn-primary btn-sm">Submitted Messages</a>
+            </div>
         </form>
     </div>
 </div>
-
-<div class="container">
-    <div class="row" style="display:flex; flex-wrap: wrap;">
-    <% forms.forEach(function(form){ %>
-        <div class="col-sm-6 col-md-4">
-            <div class="caption">
-                <a href="/form/<%=form._id%>" class="btn btn-primary btn-sm"><%=form.name%></a>
-            </div>
-        </div>
-        <% }); %>
-    </div>
-</div>
-
 
 <% include ./partials/footer %>
