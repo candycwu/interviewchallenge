@@ -1,15 +1,36 @@
-var express = require("express"),
-    app = express(),
-    bodyParser = require("body-parser"),
-    mongoose = require("mongoose"),
-    Form = require("./models/form"),
-    User = require("./models/user"),
-    seedDB = require("./seeds");
+var express               = require("express"),
+    app                   = express(),
+    mongoose              = require("mongoose"),
+    passport              = require("passport"),
+    bodyParser            = require("body-parser"),
+    User                  = require("./models/user"),
+    localStrategy         = require("passport-local"),
+    passportLocalMongoose = require("passport-local-mongoose"),
+    Form                  = require("./models/form"),
+    seedDB                = require("./seeds");
 
 seedDB();
 
+//PASSPORT CONFIGURATION
+app.use(require("express-session")({
+    secret: "Nami and Jelly are the cutest dogs ever and forever",
+    resave: false,
+    saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new localStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+//mongoose database
 mongoose.connect("mongodb://localhost/challenge");
+
+//to use bodyParser
 app.use(bodyParser .urlencoded({extended: true}));
+
+//to omit ejs at the end of files
 app.set("view engine", "ejs");
 
 
