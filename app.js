@@ -10,6 +10,8 @@ var express               = require("express"),
     Form                  = require("./models/form"),
     seedDB                = require("./seeds");
 
+// const sgMail = require('@sendgrid/mail');
+// sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 // var nodemailer = require('nodemailer');
 // var sgTransport = require('nodemailer-sendgrid-transport');
 
@@ -37,9 +39,9 @@ app.use(flash());
 //PASSPORT CONFIGURATION
 app.use(require("express-session")({
     //secret - to encode or decode the session
-    secret: "Nami and Jelly are the cutest dogs ever and forever",
-    resave: false,
-    saveUninitialized: false
+    secret: "secret",
+    saveUninitialized: false,
+    resave: false
 }));
 
 app.use(passport.initialize());
@@ -86,8 +88,6 @@ app.post("/form",  isLoggedIn, function(req, res){
     var newForm = {username:username, email:email, message:message};
     // using SendGrid's v3 Node.js Library
     // https://github.com/sendgrid/sendgrid-nodejs
-    // const sgMail = require('@sendgrid/mail');
-    // sgMail.setApiKey(process.env.SENDGRID_API_KEY);
     // const msg = {
     //   to: 'lee.candy1990@icloud.com',
     //   from: 'lee.candy1990@icloud.com',
@@ -110,7 +110,6 @@ app.post("/form",  isLoggedIn, function(req, res){
             //     text: 'Hello world',
             //     html: '<b>Hello world</b>'
             // };
-            
             // client.sendMail(email, function(err, info){
             //     if (err ){
             //         console.log(err);
@@ -162,8 +161,13 @@ app.post("/login", passport.authenticate("local",
 
 //Logout
 app.get("/logout", function(req, res){
-    req.logout();
-    res.redirect("/");
+    req.logout(function(err){
+        if(err){
+            console.log(err);
+            req.flash("error", "Please try to logout again.");
+        }
+    });
+    res.redirect("/login");
 });
 
 //MIDDLEWARE
