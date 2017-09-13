@@ -1,7 +1,6 @@
 var mongoose = require("mongoose"),
     passportLocalMongoose = require("passport-local-mongoose");
 
-
 var formSchema = new mongoose.Schema({
     name: String,
     email: String,
