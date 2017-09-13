@@ -10,6 +10,18 @@ var express               = require("express"),
     Form                  = require("./models/form"),
     seedDB                = require("./seeds");
 
+// var nodemailer = require('nodemailer');
+// var sgTransport = require('nodemailer-sendgrid-transport');
+
+// var options = {
+//   auth: {
+//     api_user: 'candylee',
+//     api_key: '//passwordhere'
+//   }
+// };
+
+// var client = nodemailer.createTransport(sgTransport(options));
+
 //mongoose database
 mongoose.Promise = global.Promise;
 mongoose.connect("mongodb://localhost/challenge");
@@ -74,24 +86,38 @@ app.post("/form",  isLoggedIn, function(req, res){
     var newForm = {username:username, email:email, message:message};
     // using SendGrid's v3 Node.js Library
     // https://github.com/sendgrid/sendgrid-nodejs
-    const sgMail = require('@sendgrid/mail');
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-    const msg = {
-        to: 'test@example.com',
-        from: 'test@example.com',
-        subject: 'Sending with SendGrid is Fun',
-        text: 'and easy to do anywhere, even with Node.js',
-        html: '<strong>and easy to do anywhere, even with Node.js</strong>',
-    };
-    sgMail.send(msg);
+    // const sgMail = require('@sendgrid/mail');
+    // sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    // const msg = {
+    //   to: 'lee.candy1990@icloud.com',
+    //   from: 'lee.candy1990@icloud.com',
+    //   subject: username,
+    //   text: message,
+    //   html: '<strong>message</strong>',
+    // };
+    // sgMail.send(msg);
     //redirect back to updated form with links to the submitted data
     //create new form and save to db
-    console.log('gather info',newForm);
     Form.create(newForm, function(err, newlyCreated){
         if(err){
             console.log('error happened\n\n,',err);
             res.redirect("back");
         } else {
+            // var email = {
+            //     from: 'Admin, lee.candy1990@icloud.com',
+            //     to: 'lee.candy1990@icloud.com',
+            //     subject: 'Hello',
+            //     text: 'Hello world',
+            //     html: '<b>Hello world</b>'
+            // };
+            
+            // client.sendMail(email, function(err, info){
+            //     if (err ){
+            //         console.log(err);
+            //     } else {
+            //         console.log('Message sent: ' + info.response);
+            //     }
+            // });
             res.redirect("/form");
         }
     });
