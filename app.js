@@ -6,9 +6,8 @@ var express               = require("express"),
     passport              = require("passport"),
     localStrategy         = require("passport-local"),
     passportLocalMongoose = require("passport-local-mongoose"),
-    Form                  = require("./models/form"),
     User                  = require("./models/user"),
-    Message               = require("./models/message"),
+    Form                  = require("./models/form"),
     seedDB                = require("./seeds");
 
 //mongoose database
@@ -21,7 +20,7 @@ app.set("view engine", "ejs");
 //use flash
 app.use(flash());
 //run seedDB
-// seedDB();
+seedDB();
 
 //PASSPORT CONFIGURATION
 app.use(require("express-session")({
@@ -73,23 +72,25 @@ app.post("/form",  isLoggedIn, function(req, res){
     var email = req.body.email;
     var message = req.body.message;
     var newForm = {username:username, email:email, message:message};
-    // // using SendGrid's v3 Node.js Library
-    // // https://github.com/sendgrid/sendgrid-nodejs
-    // const sgMail = require('@sendgrid/mail');
-    // sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-    // const msg = {
-    //     to: 'test@example.com',
-    //     from: 'test@example.com',
-    //     subject: 'Sending with SendGrid is Fun',
-    //     text: 'and easy to do anywhere, even with Node.js',
-    //     html: '<strong>and easy to do anywhere, even with Node.js</strong>',
-    // };
-    // sgMail.send(msg);
-    // //redirect back to updated form with links to the submitted data
+    // using SendGrid's v3 Node.js Library
+    // https://github.com/sendgrid/sendgrid-nodejs
+    const sgMail = require('@sendgrid/mail');
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    const msg = {
+        to: 'test@example.com',
+        from: 'test@example.com',
+        subject: 'Sending with SendGrid is Fun',
+        text: 'and easy to do anywhere, even with Node.js',
+        html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+    };
+    sgMail.send(msg);
+    //redirect back to updated form with links to the submitted data
     //create new form and save to db
-    Form.create(newForm, isLoggedIn, function(err, newlyCreated){
+    console.log('gather info',newForm);
+    Form.create(newForm, function(err, newlyCreated){
+        console.log('new created info',newlyCreated)
         if(err){
-            console.log(err);
+            console.log('error happened\n\n,',err);
             res.redirect("back");
         } else {
             res.redirect("/form");

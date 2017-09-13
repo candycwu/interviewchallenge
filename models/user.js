@@ -1,19 +1,18 @@
 var mongoose = require("mongoose"),
-    Form = require("./form.js"),
     passportLocalMongoose = require("passport-local-mongoose");
 
-var UserSchema = new mongoose.Schema({
+var userSchema = new mongoose.Schema({
     username: String,
     email: String,
     password: String,
     message: [
-                {
-                    type: mongoose.Schema.Types.ObjectId,
-                    ref: "Message"
-                }
-            ]
+        {
+            type: mongoose.Schema.Types.ObjectId,  
+            ref: "Form"
+        }
+        ]
 });
 
-UserSchema.plugin(passportLocalMongoose);
+userSchema.plugin(passportLocalMongoose);
 
-module.exports = mongoose.model("User", UserSchema);
+module.exports = mongoose.model("User", userSchema);
