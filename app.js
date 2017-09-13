@@ -20,7 +20,7 @@ app.set("view engine", "ejs");
 //use flash
 app.use(flash());
 //run seedDB
-seedDB();
+// seedDB();
 
 //PASSPORT CONFIGURATION
 app.use(require("express-session")({
@@ -88,7 +88,6 @@ app.post("/form",  isLoggedIn, function(req, res){
     //create new form and save to db
     console.log('gather info',newForm);
     Form.create(newForm, function(err, newlyCreated){
-        console.log('new created info',newlyCreated)
         if(err){
             console.log('error happened\n\n,',err);
             res.redirect("back");
