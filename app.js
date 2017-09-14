@@ -57,8 +57,8 @@ app.use(function(req, res, next){
 });
 
 //ROOT - login
-app.get("/", function(req, res){
-    res.render("login");
+app.get("/", isLoggedIn, function(req, res){
+    res.render("form");
 });
 
 //ROOT - (after login) form path
